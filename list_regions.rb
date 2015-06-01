@@ -51,14 +51,15 @@ import java.util.ArrayList
 config = HBaseConfiguration.new
 config.set 'fs.default.name', config.get(HConstants::HBASE_DIR)
 JAVA_TABLE_NAME=TABLE_NAME.to_java_bytes
-REGION_INFO_COLUMN = 'info:regioninfo'.to_java_bytes
-SERVER_COLUMN = 'info:server'.to_java_bytes
+META_TABLE_NAME = 'info'.to_java_bytes
+REGION_INFO_COLUMN = 'regioninfo'.to_java_bytes
+SERVER_COLUMN = 'server'.to_java_bytes
 
-table = HTable.new config, '.META.'.to_java_bytes
+table = HTable.new config, 'hbase:meta'.to_java_bytes
 
 scan = Scan.new
-scan.addColumn REGION_INFO_COLUMN
-scan.addColumn SERVER_COLUMN
+scan.addColumn(META_TABLE_NAME,REGION_INFO_COLUMN)
+scan.addColumn(META_TABLE_NAME,SERVER_COLUMN)
 scanner = table.getScanner scan
 
 print "Finding %s regions in %s...\n" % [WANT, TABLE_NAME]
